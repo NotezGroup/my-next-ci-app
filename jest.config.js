@@ -12,4 +12,8 @@ const customJestConfig = {
 	testEnvironment: 'jest-environment-jsdom',
 }
 
-module.exports = createJestConfig(customJestConfig)
+// Gammal rad (ta bort denna):
+// module.exports = createJestConfig(customJestConfig)
+
+// NY RAD (använd denna istället):
+export default createJestConfig(customJestConfig)
