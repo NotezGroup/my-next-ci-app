@@ -1,7 +1,8 @@
-import type { NextConfig } from "next";
+import type { NextConfig } from 'next'
 
 const nextConfig: NextConfig = {
-  /* config options here */
-};
+	output: 'export', // Detta skapar en 'out' mapp vid build
+	images: { unoptimized: true },
+}
 
-export default nextConfig;
+export default nextConfig
