@@ -1,0 +1,56 @@
+name: CI/CD Pipeline (Next.js)
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1. Hämta koden
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # 2. Installera Node
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      # 3. Installera dependencies
+      - name: Install dependencies
+        run: npm ci
+
+      # 4. Linting (Next.js har inbyggd strikt linting)
+      - name: Run Linting
+        run: npm run lint
+
+      # 5. Tester (Jest)
+      - name: Run Tests
+        run: npm test
+
+      # 6. Bygg appen
+      # Detta skapar mappen 'out' eftersom vi satte output: 'export' i configen
+      - name: Build project
+        run: npm run build
+
+      # 7. Deploy till Netlify
+      - name: Deploy to Netlify
+        if: github.ref == 'refs/heads/main'
+        uses: nwtgck/actions-netlify@v2.0
+        with:
+          publish-dir: './out' # VIKTIGT: Next.js export mapp
+          production-branch: main
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          deploy-message: "Deploy from GitHub Actions (Next.js)"
+          enable-pull-request-comment: false
+          enable-commit-comment: true
+          overwrites-pull-request-comment: true
+        env:
+          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+          NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
